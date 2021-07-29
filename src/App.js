@@ -1,23 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import React from "react";
+import Select from "./components/Select";
+import Table from "./components/Table";
 
 function App() {
+  const [data, setData] = React.useState([]);
+  const [selectedCountry, setSelectedCountry] = React.useState();
+
+  const handleSelect = (e) => {
+    setSelectedCountry(e.target.value);
+  };
+  const handleTableClick = (countryName) => {
+    setSelectedCountry(countryName);
+  };
+  React.useEffect(() => {
+    async function fetchData() {
+      try {
+        fetch("https://restcountries.eu/rest/v2/all")
+          .then((resp) => {
+            return resp.json();
+          })
+          .then((json) => {
+            setData(json);
+            return json;
+          });
+      } catch (error) {
+        alert("data load error");
+        console.error(error);
+      }
+    }
+    fetchData();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='App'>
+      <Select
+        data={data}
+        handleSelect={handleSelect}
+        selectedCountry={selectedCountry}
+      />
+      <Table
+        data={data}
+        selectedCountry={selectedCountry}
+        handleTableClick={handleTableClick}
+      />
     </div>
   );
 }
